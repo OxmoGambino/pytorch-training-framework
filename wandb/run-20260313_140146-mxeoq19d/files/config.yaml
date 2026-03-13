@@ -1,0 +1,36 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        e:
+            k4enujatozcq5orh9v8tdsucoseancjt:
+                codePath: testWebd.py
+                codePathLocal: testWebd.py
+                email: nicoladp30@gmail.com
+                executable: C:\Users\nicol\AppData\Local\Programs\Python\Python313\python.exe
+                host: ASUS_Nicola
+                os: Windows-11-10.0.26200-SP0
+                program: c:\TPS\2A\S2\ProgAv\projet\testWebd.py
+                python: CPython 3.13.3
+                root: C:\TPS\2A\S2\ProgAv\projet
+                startedAt: "2026-03-13T13:01:46.029639Z"
+                writerId: k4enujatozcq5orh9v8tdsucoseancjt
+        m: []
+        python_version: 3.13.3
+        t:
+            "3":
+                - 2
+                - 16
+            "4": 3.13.3
+            "5": 0.25.1
+            "8":
+                - 3
+            "12": 0.25.1
+            "13": windows-amd64
+architecture:
+    value: CNN
+dataset:
+    value: CIFAR-100
+epochs:
+    value: 10
+learning_rate:
+    value: 0.02
