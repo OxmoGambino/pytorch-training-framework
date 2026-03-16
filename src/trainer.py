@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
 import copy
+import wandb
 
 
 class Trainer :
@@ -85,6 +86,7 @@ class Trainer :
         for epoch in range(self.epochs):
             train_loss = self.train_one_epoch()
             val_loss, acc = self.evaluate_model()
+            wandb.log({"epoch" : epoch+1, "train_loss" : train_loss,"val_loss" : val_loss,"val_acc" : acc})
             
         
             if self.verbose : 
