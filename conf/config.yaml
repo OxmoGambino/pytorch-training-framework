@@ -1,3 +1,24 @@
-batch_size: 64
-epochs: 20
+defaults:
+  - override hydra/sweeper: optuna
+  - _self_
+
 lr: 0.001
+batch_size: 64
+epochs: 25
+
+hydra:
+  mode: MULTIRUN
+
+  sweeper:
+    direction: maximize
+    study_name: cifar10_GTG_NDP
+    n_trials: 20
+    n_jobs: 1
+
+    sampler:
+      _target_: optuna.samplers.TPESampler
+      seed: 42
+
+    params:
+      lr: tag(log, interval(1e-4, 1e-2))
+      batch_size: choice(32, 64, 128)

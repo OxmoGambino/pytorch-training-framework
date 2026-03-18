@@ -8,7 +8,7 @@ import random
 import wandb
 from datetime import datetime
 import hydra
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 
 #Generate a run name according to date and hour
 now = datetime.now()
@@ -32,7 +32,8 @@ def set_seed(seed): #Make the experiments reproductible !
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
 
-@hydra.main(config_path="conf",config_name="config")
+
+@hydra.main(version_base=None, config_path="conf", config_name="config")
 def main(cfg : DictConfig):
     set_seed(42)
     wandb.init(project="pytorch-training-framework", entity="nicoladp30-t-l-com-physique-strasbourg", name = run_name) #initialisation as soon as we enter main
@@ -63,7 +64,7 @@ def main(cfg : DictConfig):
     print(f"\nBest validation Accuracy : {best_acc:.4f}")
     
     wandb.finish()
-
+    return best_acc
 
 if __name__ == "__main__": #lauch the training by executing python3 train.py
     main()
