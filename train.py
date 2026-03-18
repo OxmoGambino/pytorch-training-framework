@@ -35,7 +35,7 @@ def set_seed(seed): #Make the experiments reproductible !
 @hydra.main(config_path="conf",config_name="config")
 def main(cfg : DictConfig):
     set_seed(42)
-    wandb.init(project="pytorch-training-framework", entity="guillaume-tritz-guden-pa2", name = run_name) #initialisation as soon as we enter main
+    wandb.init(project="pytorch-training-framework", entity="nicoladp30-t-l-com-physique-strasbourg", name = run_name) #initialisation as soon as we enter main
     
     print("1 - Début du script")
     print(cfg)
