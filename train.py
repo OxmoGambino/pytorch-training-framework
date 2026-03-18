@@ -15,8 +15,8 @@ now = datetime.now()
 run_name = f"run_test_{now.strftime('%Y%m%d_%H%M%S')}"
 
 # Hyperparameters definition 
-nb_channels1 = 32
-nb_channels2 = 64
+# nb_channels1 = 32
+# nb_channels2 = 64
 
 
 
@@ -45,8 +45,8 @@ def main(cfg : DictConfig):
     print("2 - Dataloaders créés")
 
     model = CNNClassif(nb_in_channel=3,
-                       nb_channels1=nb_channels1,
-                       nb_channels2=nb_channels2,
+                       nb_channels1=cfg.nb_channels1,
+                       nb_channels2=cfg.nb_channels2,
                        nb_classes=10)
     print("3 - Modèle créé")
     

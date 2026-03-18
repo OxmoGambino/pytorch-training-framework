@@ -1,0 +1,5 @@
+name: optuna
+best_params:
+  lr: 0.0008363109174799821
+  batch_size: 32
+best_value: 0.5621
