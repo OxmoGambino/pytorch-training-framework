@@ -5,6 +5,8 @@ defaults:
 lr: 0.001
 batch_size: 64
 epochs: 25
+nb_channels1: 32
+nb_channels2: 64
 
 hydra:
   mode: MULTIRUN
@@ -12,7 +14,7 @@ hydra:
   sweeper:
     direction: maximize
     study_name: cifar10_GTG_NDP
-    n_trials: 20
+    n_trials: 3
     n_jobs: 1
 
     sampler:
@@ -22,3 +24,5 @@ hydra:
     params:
       lr: tag(log, interval(1e-4, 1e-2))
       batch_size: choice(32, 64, 128)
+      nb_channels1: choice(16, 32, 64)
+      nb_channels2: choice(32, 64, 128)
