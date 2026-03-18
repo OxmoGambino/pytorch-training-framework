@@ -22,7 +22,7 @@ def get_dataloaders(batch_size = 64): #batch size of 64 is great for CPU trainin
     """
 
 
-    transform = transforms.Compose([transforms.ToTensor()]) #look for normalization (see Deep Learning Lectures)
+    transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.247, 0.243, 0.261])]) #look for normalization (see Deep Learning Lectures)
 
     train_set = torchvision.datasets.CIFAR10(root=DATA_DIR,
                                             train=True,
