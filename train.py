@@ -9,6 +9,8 @@ import wandb
 from datetime import datetime
 import hydra
 from omegaconf import DictConfig, OmegaConf
+import matplotlib.pyplot as plt
+
 
 #Generate a run name according to date and hour
 now = datetime.now()
@@ -72,7 +74,47 @@ def main(cfg : DictConfig):
     best_acc = trainer.run()
     print("5 - run() terminé")
     print(f"\nBest validation Accuracy : {best_acc:.4f}")
-    
+
+#Affichage d'images originales avec le label prédit
+    classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
+            'dog', 'frog', 'horse', 'ship', 'truck']
+
+    model.eval()
+
+    image_batch_example, label_batch_example = next(iter(val_dataloader))
+
+    image_batch_example = image_batch_example.to(trainer.device)
+    label_batch_example = label_batch_example.to(trainer.device)
+
+    with torch.no_grad():
+        outputs = model(image_batch_example)
+        predicted_labels = torch.argmax(outputs, dim=1)
+
+    image_batch_example = image_batch_example.cpu()
+    label_batch_example = label_batch_example.cpu()
+    predicted_labels = predicted_labels.cpu()
+
+    n_images = min(8, len(image_batch_example))
+
+    fig, axes = plt.subplots(2, 4, figsize=(14, 7))
+    axes = axes.flatten()
+
+    for ib in range(n_images):
+        img = image_batch_example[ib]
+        img = img / 2 + 0.5
+        npimg = img.numpy().transpose((1, 2, 0))
+
+        axes[ib].imshow(npimg)
+        axes[ib].set_xticks([])
+        axes[ib].set_yticks([])
+        axes[ib].set_title(
+            f"T: {classes[label_batch_example[ib]]}\n"
+            f"P: {classes[predicted_labels[ib]]}"
+        )
+
+    plt.tight_layout()
+    plt.show()
+
     wandb.finish()
     print("\n===CONFIG===")
     print("lr :", cfg.lr)
@@ -83,3 +125,4 @@ def main(cfg : DictConfig):
 
 if __name__ == "__main__": #lauch the training by executing python3 train.py
     main()
+
