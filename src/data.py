@@ -20,21 +20,26 @@ def get_dataloaders(batch_size = 64): #batch size of 64 is great for CPU trainin
     Returns:
         Tuple (train_dataloader, val_dataloader)
     """
+    train_transform = transforms.Compose([transforms.RandomCrop(32, padding=4),
+                                        transforms.RandomHorizontalFlip(),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
-
-    transform = transforms.Compose([transforms.ToTensor(),transforms.Normalize(mean=[0.4914, 0.4822, 0.4465], std=[0.247, 0.243, 0.261])]) #look for normalization (see Deep Learning Lectures)
+    val_transform = transforms.Compose([transforms.ToTensor(),
+                                    transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5))]) #look for normalization (see Deep Learning Lectures)
+    
 
     train_set = torchvision.datasets.CIFAR10(root=DATA_DIR,
                                             train=True,
                                             download=True,
-                                            transform=transform) #load data_batch1 -> data_batch5
+                                            transform=train_transform) #load data_batch1 -> data_batch5
     
     train_set = Subset(train_set, range(5000)) #Moins gourmand à l'entrainement sur CPU
     
     val_set = torchvision.datasets.CIFAR10(root=DATA_DIR,
                                             train=False,
                                             download=True,
-                                            transform=transform) #load test_batch
+                                            transform=val_transform) #load test_batch
     
     train_dataloader = DataLoader(train_set,batch_size=batch_size,shuffle=True)
     val_dataloader = DataLoader(val_set,batch_size = batch_size,shuffle=False)

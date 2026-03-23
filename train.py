@@ -36,7 +36,17 @@ def set_seed(seed): #Make the experiments reproductible !
 @hydra.main(version_base=None, config_path="conf", config_name="config")
 def main(cfg : DictConfig):
     set_seed(42)
-    wandb.init(project="pytorch-training-framework", entity="nicoladp30-t-l-com-physique-strasbourg", name = run_name) #initialisation as soon as we enter main
+    wandb.init(project="pytorch-training-framework", #initialisation as soon as we enter main
+                entity="nicoladp30-t-l-com-physique-strasbourg",
+                name = run_name,
+                config={
+                    "lr": cfg.lr,
+                    "batch_size": cfg.batch_size,
+                    "epochs": cfg.epochs,
+                    "nb_channels1": cfg.nb_channels1,
+                    "nb_channels2": cfg.nb_channels2
+                }) 
+
     
     print("1 - Début du script")
     print(cfg)
@@ -64,8 +74,12 @@ def main(cfg : DictConfig):
     print(f"\nBest validation Accuracy : {best_acc:.4f}")
     
     wandb.finish()
+    print("\n===CONFIG===")
+    print("lr :", cfg.lr)
+    print("batch_size :", cfg.batch_size)
+    print("nb_channels1", cfg.nb_channels1)
+    print("nb_channels2", cfg.nb_channels2)
     return best_acc
 
 if __name__ == "__main__": #lauch the training by executing python3 train.py
     main()
-    
