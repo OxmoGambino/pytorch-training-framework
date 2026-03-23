@@ -4,7 +4,11 @@ from torch.utils.data import DataLoader
 import copy
 import wandb
 import torch.optim as optim
+from pathlib import Path
 
+ROOT = Path(__file__).parent.parent
+CHECKPOINT_DIR = ROOT / "checkpoints"
+CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
 
 class Trainer :
     def __init__(self,model,train_dataloader, val_dataloader, lr=0.001,epochs=25,verbose=True, early_stopping=True, patience=5, min_delta=0.001):
@@ -16,6 +20,7 @@ class Trainer :
         self.verbose = verbose  
         self.optimizer = torch.optim.Adam(self.model.parameters(),lr=lr)
         self.loss_fn = nn.CrossEntropyLoss()
+        self.checkpoint_path = CHECKPOINT_DIR / "best_model.pt"
 
         #Early Stopping Parameters
         self.early_stopping = early_stopping
@@ -28,7 +33,13 @@ class Trainer :
                                                                 factor=0.5,
                                                                 patience=2)
 
-
+    def save_checkpoint(self, epoch, best_val_loss):
+        checkpoint = {"epoch": epoch,
+                    "model_state_dict": self.model.state_dict(),
+                    "optimizer_state_dict": self.optimizer.state_dict(),
+                    "scheduler_state_dict": self.scheduler.state_dict() if self.scheduler is not None else None,
+                    "best_val_loss": best_val_loss}
+        torch.save(checkpoint, self.checkpoint_path)
     
     def train_one_epoch(self):
         """Do one epoch training
@@ -118,6 +129,8 @@ class Trainer :
             if (val_loss < best_val_loss - self.min_delta):
                 best_val_loss = val_loss #Save best val_loss seen
                 patience_counter = 0
+                self.save_checkpoint(epoch=epoch,
+                                    best_val_loss=best_val_loss)
                 best_model_state = copy.deepcopy(self.model.state_dict()) #save a true copy of real weights
             else:
                 patience_counter += 1
