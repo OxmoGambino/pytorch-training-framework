@@ -5,7 +5,6 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, Subset
 from pathlib import Path
 import numpy as np
-from collections import Counter #debug
 
 
 """ Loading and preprocessing of the dataset CIFAR-10"""
@@ -45,8 +44,8 @@ def get_dataloaders(batch_size = 64): #batch size of 64 is great for CPU trainin
     
   
     
-    #subset_targets = targets[subset_indices] DEBUG
-    #print(Counter(subset_targets)) DEBUG
+    #subset_targets = targets[subset_indices]
+    #print(Counter(subset_targets))
     
     train_set = Subset(train_set,indices=subset_indices) #Moins gourmand à l'entrainement sur CPU 
     #500 images par classes
@@ -65,5 +64,3 @@ def get_dataloaders(batch_size = 64): #batch size of 64 is great for CPU trainin
     val_dataloader = DataLoader(val_set,batch_size = batch_size,shuffle=False)
 
     return train_dataloader, val_dataloader
-
-get_dataloaders()
