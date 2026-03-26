@@ -12,6 +12,7 @@ from omegaconf import DictConfig, OmegaConf
 import matplotlib.pyplot as plt
 from pathlib import Path
 from src.optimizer import build_optimizer
+from src.model import build_model
 
 
 #Generate a run name according to date and hour
@@ -44,24 +45,25 @@ def main(cfg : DictConfig):
                 entity="nicoladp30-t-l-com-physique-strasbourg",
                 name = run_name,
                 config={
-                    "lr": cfg.lr,
-                    "batch_size": cfg.batch_size,
-                    "epochs": cfg.epochs,
-                    "nb_channels1": cfg.nb_channels1,
-                    "nb_channels2": cfg.nb_channels2
+                    "lr": cfg.training.lr,
+                    "batch_size": cfg.training.batch_size,
+                    "epochs": cfg.training.epochs,
+                    "model_name": cfg.model.name,
+                    "weight_decay": cfg.optimizer.weight_decay,
+                    "nb_channels1": cfg.model.cnn.nb_channels1,
+                    "nb_channels2": cfg.model.cnn.nb_channels2,
+                    "hidden_dim": cfg.model.mlp.hidden_dim
                 }) 
 
     
     print("1 - Début du script")
     print(cfg)
 
-    train_dataloader, val_dataloader = get_dataloaders(batch_size = cfg.batch_size)
+    train_dataloader, val_dataloader = get_dataloaders(batch_size = cfg.training.batch_size)
     print("2 - Dataloaders créés")
 
-    model = CNNClassif(nb_in_channel=3,
-                       nb_channels1=cfg.nb_channels1,
-                       nb_channels2=cfg.nb_channels2,
-                       nb_classes=10)
+    model = build_model(cfg) #Création du modèle selon le modèle choisit à l'exécution
+
     print("3 - Modèle créé")
 
     optimizer = build_optimizer(model, cfg)
@@ -70,9 +72,10 @@ def main(cfg : DictConfig):
                       train_dataloader=train_dataloader,
                       val_dataloader=val_dataloader,
                       optimizer=optimizer,
-                      epochs=cfg.epochs,
+                      epochs=cfg.training.epochs,
                       verbose=True
     )
+
     print("4 - Trainer créé")
 
     best_acc = trainer.run()
@@ -127,10 +130,10 @@ def main(cfg : DictConfig):
 
     wandb.finish()
     print("\n===CONFIG===")
-    print("lr :", cfg.lr)
-    print("batch_size :", cfg.batch_size)
-    print("nb_channels1", cfg.nb_channels1)
-    print("nb_channels2", cfg.nb_channels2)
+    print("lr :", cfg.training.lr)
+    print("batch_size :", cfg.training.batch_size)
+    print("nb_channels1", cfg.model.cnn.nb_channels1)
+    print("nb_channels2", cfg.model.cnn.nb_channels2)
     return best_acc
 
 if __name__ == "__main__": #lauch the training by executing python3 train.py
