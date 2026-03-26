@@ -37,7 +37,7 @@ def get_dataloaders(batch_size = 64): #batch size of 64 is great for CPU trainin
                                             transform=train_transform) #load data_batch1 -> data_batch5
     
     
-    # Application d'un subset stratifié de 5000 images (500 images par classes)
+    # Apply a stratified subset of 5000 images (500 per class)
     targets = np.array(train_set.targets) 
     indices = np.arange(len(targets))
     subset_indices, _ = train_test_split(indices, train_size=0.1, stratify=targets, random_state=42)
