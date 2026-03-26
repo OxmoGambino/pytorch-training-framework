@@ -210,3 +210,6 @@ wandb/
 #logs de Hydra
 outputs/
 .hydra/
+
+#Logs multirun
+multirun/
