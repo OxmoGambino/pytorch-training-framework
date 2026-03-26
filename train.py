@@ -10,6 +10,7 @@ from datetime import datetime
 import hydra
 from omegaconf import DictConfig, OmegaConf
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
 #Generate a run name according to date and hour
@@ -79,7 +80,7 @@ def main(cfg : DictConfig):
     classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
             'dog', 'frog', 'horse', 'ship', 'truck']
 
-    model.eval()
+    trainer.model.eval()
 
     image_batch_example, label_batch_example = next(iter(val_dataloader))
 
@@ -87,8 +88,8 @@ def main(cfg : DictConfig):
     label_batch_example = label_batch_example.to(trainer.device)
 
     with torch.no_grad():
-        outputs = model(image_batch_example)
-        predicted_labels = torch.argmax(outputs, dim=1)
+        trainer.outputs = model(image_batch_example)
+        predicted_labels = torch.argmax(trainer.outputs, dim=1)
 
     image_batch_example = image_batch_example.cpu()
     label_batch_example = label_batch_example.cpu()
@@ -108,11 +109,17 @@ def main(cfg : DictConfig):
         axes[ib].set_xticks([])
         axes[ib].set_yticks([])
         axes[ib].set_title(
-            f"T: {classes[label_batch_example[ib]]}\n"
-            f"P: {classes[predicted_labels[ib]]}"
+            f"T: {classes[label_batch_example[ib].item()]}\n"
+            f"P: {classes[predicted_labels[ib].item()]}"
         )
-
+    print("6 - Début affichage des images")
+    print("Shape batch images :", image_batch_example.shape)
+    print("Labels vrais :", label_batch_example[:n_images])
+    print("Labels prédits :", predicted_labels[:n_images])
     plt.tight_layout()
+    save_path = Path("predictions_examples.png")
+    plt.savefig(save_path)
+    print(f"Image sauvegardée : {save_path.resolve()}")
     plt.show()
 
     wandb.finish()
