@@ -62,7 +62,7 @@ def main(cfg : DictConfig):
     train_dataloader, val_dataloader = get_dataloaders(batch_size = cfg.training.batch_size)
     print("2 - Dataloaders créés")
 
-    model = build_model(cfg) #Création du modèle selon le modèle choisit à l'exécution
+    model = build_model(cfg) #Création du modèle selon le modèle choisi à l'exécution
 
     print("3 - Modèle créé")
 
@@ -132,8 +132,12 @@ def main(cfg : DictConfig):
     print("\n===CONFIG===")
     print("lr :", cfg.training.lr)
     print("batch_size :", cfg.training.batch_size)
-    print("nb_channels1", cfg.model.cnn.nb_channels1)
-    print("nb_channels2", cfg.model.cnn.nb_channels2)
+    print("model_name :", cfg.model.name)
+    if cfg.model.name.lower() == "cnn":
+        print("nb_channels1", cfg.model.cnn.nb_channels1)
+        print("nb_channels2", cfg.model.cnn.nb_channels2)
+    elif cfg.model.name.lower() == "mlp":
+        print("hidden_dim", cfg.model.mlp.hidden_dim)
     return best_acc
 
 if __name__ == "__main__": #lauch the training by executing python3 train.py

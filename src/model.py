@@ -75,4 +75,4 @@ def build_model(cfg):
         return ResNet18Classif(nb_classes=cfg.model.nb_classes)
     
     else:
-        raise ValueError(f"Uknown model name : {model_name}")
+        raise ValueError(f"Unknown model name : {model_name}")
