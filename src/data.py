@@ -4,6 +4,9 @@ import torchvision.transforms as transforms
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, Subset
 from pathlib import Path
+import numpy as np
+from collections import Counter #debug
+
 
 """ Loading and preprocessing of the dataset CIFAR-10"""
 
@@ -34,7 +37,24 @@ def get_dataloaders(batch_size = 64): #batch size of 64 is great for CPU trainin
                                             download=True,
                                             transform=train_transform) #load data_batch1 -> data_batch5
     
-    train_set = Subset(train_set, range(5000)) #Moins gourmand à l'entrainement sur CPU
+    
+    # Application d'un subset stratifié de 5000 images (500 images par classes)
+    targets = np.array(train_set.targets) 
+    indices = np.arange(len(targets))
+    subset_indices,_ = train_test_split(indices, train_size=0.1,stratify=targets,random_state=42)
+    
+  
+    
+    #subset_targets = targets[subset_indices] DEBUG
+    #print(Counter(subset_targets)) DEBUG
+    
+    train_set = Subset(train_set,indices=subset_indices) #Moins gourmand à l'entrainement sur CPU 
+    #500 images par classes
+
+
+    
+    
+    
     
     val_set = torchvision.datasets.CIFAR10(root=DATA_DIR,
                                             train=False,
@@ -45,3 +65,5 @@ def get_dataloaders(batch_size = 64): #batch size of 64 is great for CPU trainin
     val_dataloader = DataLoader(val_set,batch_size = batch_size,shuffle=False)
 
     return train_dataloader, val_dataloader
+
+get_dataloaders()
