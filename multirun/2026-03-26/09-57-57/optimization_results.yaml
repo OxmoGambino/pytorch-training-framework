@@ -1,7 +1,0 @@
-name: optuna
-best_params:
-  lr: 0.0005611516415334506
-  batch_size: 32
-  nb_channels1: 16
-  nb_channels2: 32
-best_value: 0.5124

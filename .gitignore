@@ -213,3 +213,9 @@ outputs/
 
 #Logs multirun
 multirun/
+
+#Checkpoints
+checkpoints/
+
+#Prediction examples
+predictions_examples.png
