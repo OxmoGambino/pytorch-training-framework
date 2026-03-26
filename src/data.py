@@ -40,21 +40,10 @@ def get_dataloaders(batch_size = 64): #batch size of 64 is great for CPU trainin
     # Application d'un subset stratifié de 5000 images (500 images par classes)
     targets = np.array(train_set.targets) 
     indices = np.arange(len(targets))
-    subset_indices,_ = train_test_split(indices, train_size=0.1,stratify=targets,random_state=42)
-    
-  
-    
-    #subset_targets = targets[subset_indices]
-    #print(Counter(subset_targets))
-    
-    train_set = Subset(train_set,indices=subset_indices) #Moins gourmand à l'entrainement sur CPU 
-    #500 images par classes
+    subset_indices, _ = train_test_split(indices, train_size=0.1, stratify=targets, random_state=42)
 
+    train_set = Subset(train_set, indices=subset_indices)  # Stratified subset: 500 images per class for efficient CPU training
 
-    
-    
-    
-    
     val_set = torchvision.datasets.CIFAR10(root=DATA_DIR,
                                             train=False,
                                             download=True,
