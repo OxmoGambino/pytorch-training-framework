@@ -11,14 +11,15 @@ CHECKPOINT_DIR = ROOT / "checkpoints"
 CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
 
 class Trainer :
-    def __init__(self,model,train_dataloader, val_dataloader, lr=0.001,epochs=25,verbose=True, early_stopping=True, patience=5, min_delta=0.001):
+    def __init__(self,model,train_dataloader, val_dataloader, optimizer,epochs=25,verbose=True, early_stopping=True, patience=5, min_delta=0.001):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu") #maybe one day we will have a GPU (no we poor)
         self.model = model.to(self.device)
         self.train_dataloader = train_dataloader
         self.val_dataloader = val_dataloader
         self.epochs = epochs
         self.verbose = verbose  
-        self.optimizer = torch.optim.Adam(self.model.parameters(),lr=lr)
+        self.optimizer = optimizer
+        #self.optimizer = torch.optim.Adam(self.model.parameters(),lr=lr)
         self.loss_fn = nn.CrossEntropyLoss()
         self.checkpoint_path = CHECKPOINT_DIR / "best_model.pt"
 
@@ -110,6 +111,7 @@ class Trainer :
             val_loss, acc = self.evaluate_model()
             self.scheduler.step(val_loss)
             current_lr = self.optimizer.param_groups[0]['lr']
+            current_weight_decay = self.optimizer.param_groups[0]['weight_decay']
             print(f"LR actuel : {current_lr}")
             wandb.log({"epoch" : epoch+1,
                         "train_loss" : train_loss,
@@ -121,7 +123,8 @@ class Trainer :
                       f"Training Loss : {train_loss:.4f},"
                       f"Validation loss : {val_loss: .4f}, "
                       f"Accuracy : {acc:.4f},"
-                      f"Learning Rate : {current_lr}") #epochs+1 = beginning at 1
+                      f"Learning Rate : {current_lr},"
+                      f"Weight Decay : {current_weight_decay}") #epochs+1 = beginning at 1
                 
             if (acc > best_acc) : 
                 best_acc = acc #Save best accuracy seen

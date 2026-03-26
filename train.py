@@ -11,6 +11,7 @@ import hydra
 from omegaconf import DictConfig, OmegaConf
 import matplotlib.pyplot as plt
 from pathlib import Path
+from src.optimizer import build_optimizer
 
 
 #Generate a run name according to date and hour
@@ -62,11 +63,13 @@ def main(cfg : DictConfig):
                        nb_channels2=cfg.nb_channels2,
                        nb_classes=10)
     print("3 - Modèle créé")
-    
+
+    optimizer = build_optimizer(model, cfg)
+
     trainer = Trainer(model=model,
                       train_dataloader=train_dataloader,
                       val_dataloader=val_dataloader,
-                      lr=cfg.lr,
+                      optimizer=optimizer,
                       epochs=cfg.epochs,
                       verbose=True
     )
