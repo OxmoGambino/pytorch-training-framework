@@ -6,7 +6,7 @@ def build_optimizer(model, cfg):
     Construit l'optimiseur à partir de la config Hydra
     """
     optimizer_name = cfg.optimizer.name.lower()
-    lr = cfg.lr
+    lr = cfg.training.lr
     weight_decay = cfg.optimizer.weight_decay
 
     if optimizer_name == "adam":

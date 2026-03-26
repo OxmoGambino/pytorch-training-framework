@@ -1,6 +1,6 @@
 import torch.nn.functional as F #useful for forward pass
 import torch.nn as nn
-
+import torchvision.models as models
 
 class CNNClassif(nn.Module):
 
@@ -32,3 +32,47 @@ class CNNClassif(nn.Module):
         x = self.cnn_linear(x)
         return x
 
+
+class MLPClassif(nn.Module):
+    def __init__(self, input_dim=32*32*3, hidden_dim=512, nb_classes=10):
+        super().__init__()
+        self.net = nn.Sequential(nn.Flatten(),nn.Linear(input_dim,hidden_dim),
+                                  nn.ReLU(), nn.Linear(hidden_dim, nb_classes))
+        
+    def forward(self, x):
+        return self.net(x)
+
+
+
+class ResNet18Classif(nn.Module):
+    def __init__(self, nb_classes=10):
+        super().__init__()
+        self.model = models.resnet18(weights=None)
+        self.model.fc = nn.Linear(self.model.fc.in_features, nb_classes)
+
+    def forward(self, x):
+        return self.model(x)
+    
+
+
+
+
+def build_model(cfg):
+    model_name = cfg.model.name.lower()
+
+    if (model_name == "mlp"):
+        return MLPClassif(hidden_dim=cfg.model.mlp.hidden_dim,
+                          nb_classes=cfg.model.nb_classes)
+    
+    elif (model_name == "cnn"):
+        return CNNClassif(nb_in_channel=3,
+                           nb_channels1=cfg.model.cnn.nb_channels1,
+                           nb_channels2=cfg.model.cnn.nb_channels2,
+                           nb_classes=cfg.model.nb_classes)
+    
+
+    elif (model_name == 'resnet18'):
+        return ResNet18Classif(nb_classes=cfg.model.nb_classes)
+    
+    else:
+        raise ValueError(f"Unknown model name : {model_name}")
