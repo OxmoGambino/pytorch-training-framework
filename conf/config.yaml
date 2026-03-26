@@ -7,6 +7,10 @@ batch_size: 64
 epochs: 10
 nb_channels1: 32
 nb_channels2: 64
+optimizer:
+  name: adam
+  weight_decay: 0.0
+  momentum: 0.9
 
 hydra:
   mode: MULTIRUN
@@ -26,3 +30,4 @@ hydra:
       batch_size: choice(32, 64, 128)
       nb_channels1: choice(16, 32, 64)
       nb_channels2: choice(32, 64, 128)
+      optimizer.weight_decay: tag(log, interval(1e-6, 1e-2))
