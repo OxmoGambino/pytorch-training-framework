@@ -25,6 +25,19 @@ optimizer:
   weight_decay: 0.0
   momentum: 0.9
 
+augmentation:
+  enabled: True
+  random_crop:
+    enabled: True
+    size: 32
+    padding: 4
+  horizontal_flip:
+    enabled: True
+    p: 0.5
+  rotation:
+    enabled: False
+    degrees: 15
+
 hydra:
   mode: MULTIRUN
 

@@ -16,12 +16,14 @@ class CNNClassif(nn.Module):
     
     """
     
-    def __init__(self,nb_in_channel,nb_channels1,nb_channels2,nb_classes):
+    def __init__(self,nb_in_channel,nb_channels1,nb_channels2,nb_classes,dropout=0.0):
         super().__init__()
         self.cnn_layer1 = nn.Conv2d(in_channels=nb_in_channel,out_channels=nb_channels1,kernel_size=3,padding=1)
         self.max_pool = nn.MaxPool2d(kernel_size=2,stride=2) #stride = 2 with kernel = 2 : divide size by 2 #BUT WHY?
         self.cnn_layer2 = nn.Conv2d(in_channels=nb_channels1,out_channels=nb_channels2,kernel_size=3,padding=1)
         self.cnn_linear = nn.Linear(in_features=nb_channels2*8*8,out_features=nb_classes) ## Voir si on peut pas faire un calcul automatique si on change les paramètres
+        self.dropout = nn.Dropout(p=dropout)
+
 
     def forward(self,x):
         x = F.relu(self.cnn_layer1(x)) #la syntaxe c'est pas ReLU ?
@@ -66,10 +68,10 @@ def build_model(cfg):
     
     elif (model_name == "cnn"):
         return CNNClassif(nb_in_channel=3,
-                           nb_channels1=cfg.model.simple_cnn.nb_channels1,
-                           nb_channels2=cfg.model.simple_cnn.nb_channels2,
+                           nb_channels1=cfg.model.cnn.nb_channels1,
+                           nb_channels2=cfg.model.cnn.nb_channels2,
                            nb_classes=cfg.model.nb_classes,
-                           dropout=cfg.model.simple_cnn.dropout)
+                           dropout=cfg.model.cnn.dropout)
     
 
     elif (model_name == 'resnet18'):
