@@ -2,11 +2,24 @@ defaults:
   - override hydra/sweeper: optuna
   - _self_
 
-lr: 0.001
-batch_size: 64
-epochs: 10
-nb_channels1: 32
-nb_channels2: 64
+model:
+  name: cnn
+  nb_classes: 10
+
+  mlp:
+    hidden_dim: 512
+
+  cnn:
+    nb_channels1: 32
+    nb_channels2: 64
+    kernel_size: 3
+    dropout: 0.3
+
+training:
+  lr: 0.001
+  batch_size: 64
+  epochs: 10
+
 optimizer:
   name: adam
   weight_decay: 0.0
@@ -26,8 +39,9 @@ hydra:
       seed: 42
 
     params:
-      lr: tag(log, interval(1e-4, 1e-2))
-      batch_size: choice(32, 64, 128)
-      nb_channels1: choice(16, 32, 64)
-      nb_channels2: choice(32, 64, 128)
+      training.lr: tag(log, interval(1e-4, 1e-2))
+      training.batch_size: choice(32, 64, 128)
+      model.cnn.nb_channels1: choice(16, 32, 64)
+      model.cnn.nb_channels2: choice(32, 64, 128)
       optimizer.weight_decay: tag(log, interval(1e-6, 1e-2))
+      model.mlp.hidden_dim: choice(256,512,1024)
