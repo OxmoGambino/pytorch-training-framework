@@ -13,7 +13,48 @@ import numpy as np
 ROOT = Path(__file__).parent.parent  # src/ → pytorch-training-framework/
 DATA_DIR = ROOT / "data"             # p-t-f/data/
 
-def get_dataloaders(batch_size = 64): #batch size of 64 is great for CPU training (not too large but not too small.)
+def build_train_transform(cfg):
+    """
+    Construit dynamiquement la pipeline de transformations
+    du train set à partir de la config Hydra.
+    """
+    transform_list=[]
+
+    if (cfg.augmentation.enabled):
+        if (cfg.augmentation.random_crop.enabled):
+            transform_list.append(transforms.RandomCrop(size=cfg.augmentation.random_crop.size,
+                                 padding=cfg.augmentation.random_crop.padding))
+
+        if (cfg.augmentation.horizontal_flip.enabled):
+            transform_list.append(transforms.RandomHorizontalFlip(
+                                    p=cfg.augmentation.horizontal_flip.p))
+
+        if (cfg.augmentation.rotation.enabled):
+            transform_list.append(transforms.RandomRotation(
+                                    degrees=cfg.augmentation.rotation.degrees))
+
+    transform_list.extend([transforms.ToTensor(),
+                        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+
+    return transforms.Compose(transform_list)
+
+
+def build_val_transform():
+    """
+    Pas d’augmentation pour la validation/test.
+    """
+    return transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    ])
+
+
+
+
+
+
+
+def get_dataloaders(cfg): 
     """Generate trainng and validation dataloaders on CIFAR-10
 
     Args:
@@ -22,34 +63,25 @@ def get_dataloaders(batch_size = 64): #batch size of 64 is great for CPU trainin
     Returns:
         Tuple (train_dataloader, val_dataloader)
     """
-    train_transform = transforms.Compose([transforms.RandomCrop(32, padding=4),
-                                        transforms.RandomHorizontalFlip(),
-                                        transforms.ToTensor(),
-                                        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+    train_transform = build_train_transform(cfg)
+    val_transform = build_val_transform()
 
-    val_transform = transforms.Compose([transforms.ToTensor(),
-                                    transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5))]) #look for normalization (see Deep Learning Lectures)
-    
-
-    train_set = torchvision.datasets.CIFAR10(root=DATA_DIR,
+    trainset = torchvision.datasets.CIFAR10( root="./data",
                                             train=True,
-                                            download=True,
-                                            transform=train_transform) #load data_batch1 -> data_batch5
+                                            download=False,
+                                            transform=train_transform)
     
+    valset = torchvision.datasets.CIFAR10(root="./data",
+                                        train=False,
+                                        download=False,
+                                        transform=val_transform)
     
-    # Apply a stratified subset of 5000 images (500 per class)
-    targets = np.array(train_set.targets) 
-    indices = np.arange(len(targets))
-    subset_indices, _ = train_test_split(indices, train_size=0.1, stratify=targets, random_state=42)
-
-    train_set = Subset(train_set, indices=subset_indices)  # Stratified subset: 500 images per class for efficient CPU training
-
-    val_set = torchvision.datasets.CIFAR10(root=DATA_DIR,
-                                            train=False,
-                                            download=True,
-                                            transform=val_transform) #load test_batch
+    trainloader = DataLoader( trainset,
+                            batch_size=cfg.training.batch_size,
+                            shuffle=True)
     
-    train_dataloader = DataLoader(train_set,batch_size=batch_size,shuffle=True)
-    val_dataloader = DataLoader(val_set,batch_size = batch_size,shuffle=False)
+    valloader = DataLoader(valset,
+                        batch_size=cfg.training.batch_size,
+                        shuffle=False)
 
-    return train_dataloader, val_dataloader
+    return trainloader, valloader

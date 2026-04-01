@@ -59,7 +59,7 @@ def main(cfg : DictConfig):
     print("1 - Début du script")
     print(cfg)
 
-    train_dataloader, val_dataloader = get_dataloaders(batch_size = cfg.training.batch_size)
+    train_dataloader, val_dataloader = get_dataloaders(cfg)
     print("2 - Dataloaders créés")
 
     model = build_model(cfg) #Création du modèle selon le modèle choisit à l'exécution
