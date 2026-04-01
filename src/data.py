@@ -4,6 +4,8 @@ import torchvision.transforms as transforms
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, Subset
 from pathlib import Path
+import numpy as np
+
 
 """ Loading and preprocessing of the dataset CIFAR-10"""
 
