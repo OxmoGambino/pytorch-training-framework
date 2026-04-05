@@ -22,21 +22,30 @@ training:
 
 optimizer:
   name: adam
-  weight_decay: 0.0
-  momentum: 0.9
+  weight_decay: 0.0 #régularisation
+  momentum: 0.9 #compenser les oscillations de gradient (comme SGD momentum)
 
-augmentation:
-  enabled: True
-  random_crop:
+loss:
+  name: cross_entropy
+
+
+data:
+  subset: #toujours stratifié
+    enabled: true
+    fraction: 0.05 #2500 images, plus rapide pour tests
+
+  augmentation:
     enabled: True
-    size: 32
-    padding: 4
-  horizontal_flip:
-    enabled: True
-    p: 0.5
-  rotation:
-    enabled: False
-    degrees: 15
+    random_crop:
+      enabled: True
+      size: 32
+      padding: 4
+    horizontal_flip:
+      enabled: True
+      p: 0.5
+    rotation:
+      enabled: False
+      degrees: 15
 
 hydra:
   mode: MULTIRUN

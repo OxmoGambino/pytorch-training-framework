@@ -1,4 +1,3 @@
-from src.model import CNNClassif
 from src.data import get_dataloaders
 from src.trainer import Trainer
 
@@ -13,11 +12,12 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from src.optimizer import build_optimizer
 from src.model import build_model
+from src.loss import build_loss
 
 
 #Generate a run name according to date and hour
 now = datetime.now()
-run_name = f"run_test_{now.strftime('%Y%m%d_%H%M%S')}"
+run_name = f"run_test_{now.strftime('%Y%m%d_%H%M%S')}" #en vrai ça s'améliore, on pourait prendre en compte les optimiseur,loss, ...
 
 # Hyperparameters definition 
 # nb_channels1 = 32
@@ -44,16 +44,8 @@ def main(cfg : DictConfig):
     wandb.init(project="pytorch-training-framework", #initialisation as soon as we enter main
                 entity="nicoladp30-t-l-com-physique-strasbourg",
                 name = run_name,
-                config={
-                    "lr": cfg.training.lr,
-                    "batch_size": cfg.training.batch_size,
-                    "epochs": cfg.training.epochs,
-                    "model_name": cfg.model.name,
-                    "weight_decay": cfg.optimizer.weight_decay,
-                    "nb_channels1": cfg.model.cnn.nb_channels1,
-                    "nb_channels2": cfg.model.cnn.nb_channels2,
-                    "hidden_dim": cfg.model.mlp.hidden_dim
-                }) 
+                config=OmegaConf.to_container(cfg, resolve=True)) 
+                #on prend tous les param du .yaml, pas d'oublis et pas besoin de modifier l'init à chaque modif du .yaml
 
     
     print("1 - Début du script")
@@ -67,11 +59,12 @@ def main(cfg : DictConfig):
     print("3 - Modèle créé")
 
     optimizer = build_optimizer(model, cfg)
-
+    loss_fn = build_loss(cfg)
     trainer = Trainer(model=model,
                       train_dataloader=train_dataloader,
                       val_dataloader=val_dataloader,
                       optimizer=optimizer,
+                      loss_fn=loss_fn,
                       epochs=cfg.training.epochs,
                       verbose=True
     )
