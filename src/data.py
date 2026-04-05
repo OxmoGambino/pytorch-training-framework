@@ -20,18 +20,18 @@ def build_train_transform(cfg):
     """
     transform_list=[]
 
-    if (cfg.augmentation.enabled):
-        if (cfg.augmentation.random_crop.enabled):
-            transform_list.append(transforms.RandomCrop(size=cfg.augmentation.random_crop.size,
-                                 padding=cfg.augmentation.random_crop.padding))
+    if (cfg.data.augmentation.enabled):
+        if (cfg.data.augmentation.random_crop.enabled):
+            transform_list.append(transforms.RandomCrop(size=cfg.data.augmentation.random_crop.size,
+                                 padding=cfg.data.augmentation.random_crop.padding))
 
-        if (cfg.augmentation.horizontal_flip.enabled):
+        if (cfg.data.augmentation.horizontal_flip.enabled):
             transform_list.append(transforms.RandomHorizontalFlip(
-                                    p=cfg.augmentation.horizontal_flip.p))
+                                    p=cfg.data.augmentation.horizontal_flip.p))
 
-        if (cfg.augmentation.rotation.enabled):
+        if (cfg.data.augmentation.rotation.enabled):
             transform_list.append(transforms.RandomRotation(
-                                    degrees=cfg.augmentation.rotation.degrees))
+                                    degrees=cfg.data.augmentation.rotation.degrees))
 
     transform_list.extend([transforms.ToTensor(),
                         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
@@ -66,6 +66,7 @@ def get_dataloaders(cfg):
     train_transform = build_train_transform(cfg)
     val_transform = build_val_transform()
 
+
     trainset = torchvision.datasets.CIFAR10( root="./data",
                                             train=True,
                                             download=False,
@@ -75,6 +76,14 @@ def get_dataloaders(cfg):
                                         train=False,
                                         download=False,
                                         transform=val_transform)
+    
+    
+    if cfg.data.subset.enabled: 
+        subset_idx,_ = train_test_split(np.arange(len(trainset)),
+                                        test_size=0.1,
+                                        shuffle=True,
+                                        stratify=trainset.targets)
+    trainset = Subset(trainset,subset_idx) #subset de 2500 images pour simplifier
     
     trainloader = DataLoader( trainset,
                             batch_size=cfg.training.batch_size,

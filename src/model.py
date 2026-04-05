@@ -50,7 +50,7 @@ class ResNet18Classif(nn.Module):
     def __init__(self, nb_classes=10):
         super().__init__()
         self.model = models.resnet18(weights=None)
-        self.model.fc = nn.Linear(self.model.fc.in_feature, nb_classes)
+        self.model.fc = nn.Linear(self.model.fc.in_features, nb_classes)
 
     def forward(self, x):
         return self.model(x)

@@ -11,7 +11,7 @@ CHECKPOINT_DIR = ROOT / "checkpoints"
 CHECKPOINT_DIR.mkdir(parents=True, exist_ok=True)
 
 class Trainer :
-    def __init__(self,model,train_dataloader, val_dataloader, optimizer,epochs=25,verbose=True, early_stopping=True, patience=5, min_delta=0.001):
+    def __init__(self,model,train_dataloader, val_dataloader, optimizer,loss_fn,epochs=25,verbose=True, early_stopping=True, patience=5, min_delta=0.001):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu") #maybe one day we will have a GPU (no we poor)
         self.model = model.to(self.device)
         self.train_dataloader = train_dataloader
@@ -19,8 +19,7 @@ class Trainer :
         self.epochs = epochs
         self.verbose = verbose  
         self.optimizer = optimizer
-        #self.optimizer = torch.optim.Adam(self.model.parameters(),lr=lr)
-        self.loss_fn = nn.CrossEntropyLoss()
+        self.loss_fn = loss_fn
         self.checkpoint_path = CHECKPOINT_DIR / "best_model.pt"
 
         #Early Stopping Parameters
@@ -113,10 +112,6 @@ class Trainer :
             current_lr = self.optimizer.param_groups[0]['lr']
             current_weight_decay = self.optimizer.param_groups[0]['weight_decay']
             print(f"LR actuel : {current_lr}")
-            wandb.log({"epoch" : epoch+1,
-                        "train_loss" : train_loss,
-                        "val_loss" : val_loss,
-                        "val_acc" : acc})
             
             if self.verbose : 
                 print(f"Epoch [{epoch+1}/{self.epochs}],"
@@ -145,6 +140,14 @@ class Trainer :
                 if (self.verbose):
                     print("Early stopping triggered.")
                 break
+            
+            wandb.log({"epoch" : epoch+1,
+                        "train_loss" : train_loss,
+                        "val_loss" : val_loss,
+                        "val_acc" : acc,
+                        "best_val_accuracy_yet" : best_acc,
+                        "patience_counter" : patience_counter}) #ça peut être intéressant la patience de l'early stopping
+            
 
         if (best_model_state is not None):
             self.model.load_state_dict(best_model_state)
