@@ -5,7 +5,7 @@ import torch
 import numpy as np
 import random
 import wandb
-from datetime import datetime
+
 import hydra
 from omegaconf import DictConfig, OmegaConf
 import matplotlib.pyplot as plt
@@ -13,16 +13,7 @@ from pathlib import Path
 from src.optimizer import build_optimizer
 from src.model import build_model
 from src.loss import build_loss
-
-
-#Generate a run name according to date and hour
-now = datetime.now()
-run_name = f"run_test_{now.strftime('%Y%m%d_%H%M%S')}" #en vrai ça s'améliore, on pourait prendre en compte les optimiseur,loss, ...
-
-# Hyperparameters definition 
-# nb_channels1 = 32
-# nb_channels2 = 64
-
+from src.utils import build_run_name
 
 
 def set_seed(seed): #Make the experiments reproductible ! 
@@ -40,7 +31,10 @@ def set_seed(seed): #Make the experiments reproductible !
 
 @hydra.main(version_base=None, config_path="conf", config_name="config")
 def main(cfg : DictConfig):
+    
     set_seed(42)
+    run_name = build_run_name(cfg)
+    
     wandb.init(project="pytorch-training-framework", #initialisation as soon as we enter main
                 entity="nicoladp30-t-l-com-physique-strasbourg",
                 name = run_name,
