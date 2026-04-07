@@ -127,12 +127,10 @@ wandb login
 
 ## 📊 Visual Results
 > Below are sample predictions made by the best model on the test dataset:
-<p align="center">
-  <img src="TrackingExperiment.jpeg" alt="Picture of our experiment" width="500"/>
-</p>
+    ![The optimal configuration achieved 67% accuracy on the test set.](TrackingExperiment.jpeg)
 
 ![Tracking](https://img.shields.io/badge/Weight&Biases-blue)
-("The optimal configuration achieved X% accuracy on the test set.")
+
 
 ## 🧩 Configuration Highlight (YAML)
 All logic is driven by conf/config.yaml. Here is a snippet of how the Optuna search space is defined:
