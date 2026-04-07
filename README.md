@@ -128,6 +128,9 @@ wandb login
 ## 📊 Visual Results
 > Below are sample predictions made by the best model on the test dataset:
     ![The optimal configuration achieved 67% accuracy on the test set.](TrackingExperiment.jpeg)
+<p align="center">
+  The optimal configuration achieved 67% accuracy on the test set.
+</p>
 
 ![Tracking](https://img.shields.io/badge/Weight&Biases-blue)
 
