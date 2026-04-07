@@ -1,20 +1,31 @@
 # CIFAR-10 Classification Framework 🚀
 
-A professional, MLOps-ready **PyTorch training framework** for image classification on the **CIFAR-10** dataset. 
-This project provides a highly modular, reproducible, and easily tunable pipeline integrating state-of-the-art tools for configuration management, hyperparameter optimization, and experiment tracking.
-
+- Provide a flexible and modular deep learning framework for image classification tasks
+- Enable easy experimentation with different neural network architectures (e.g., MLP, CNN)
+- Allow seamless tuning of training hyperparameters (learning rate, batch size, epochs, etc.)
+- Facilitate comparison between optimization strategies (optimizers, schedulers)
+- Integrate data augmentation techniques to improve model generalization
+- Support reproducible experiments through controlled randomness (seed setting)
+- Offer a clean structure for research-oriented workflows and rapid prototyping
+  
 ## ✨ Goals
 
-- Provide a scalable and maintainable deep learning structure.
-- Fully decouple configuration from code for rapid iteration.
-- Automate hyperparameter search to maximize model performance.
-- Guarantee experiment reproducibility and comprehensive tracking.
+- Modular Architecture Selection
+- Easily switch between different models via configuration (MLP, CNN, etc.)
+- Hydra-based Configuration System
+- Hyperparameter Optimization with Optuna
+- Automated search for optimal parameters (learning rate, architecture size, etc.)
+- Early Stopping Mechanism
+- Learning Rate Scheduling
+- Data Augmentation Module
+- Experiment Tracking with Weights & Biases
+- Reproducibility
 
 ## 🧱 Features
 
-- **Custom Architecture:** Configurable CNN backbone coupled with a Multi-Layer Perceptron (MLP) head.
+- **Modular Architecture Selection:** Easily switch between different models via configuration (MLP, CNN, etc.)
 - **Configuration Management:** Centralized declarative config via [Hydra](https://hydra.cc/).
-- **Hyperparameter Sweeps:** Automated tuning using [Optuna](https://optuna.org/) (TPE Sampler).
+- **Hyperparameter Sweeps:** Automated search for optimal parameters using [Optuna](https://optuna.org/).
 - **Experiment Tracking:** Real-time logging of metrics, losses, and system stats via [Weights & Biases (W&B)](https://wandb.ai/).
 - **Data Augmentation:** Integrated PyTorch transformations (Random Crop, Horizontal Flip).
 - **Automated Checkpointing:** Saves the best model weights based on validation performance.
@@ -72,14 +83,15 @@ pip install torch torchvision hydra-core hydra-optuna-sweeper wandb
 ```
 
 ## ▶️ Usage & Training
-# 1. Running a Hyperparameter Sweep (Default)
+
+1. Running a Hyperparameter Sweep (Default)
 By default, the project is set up to run an Optuna sweep (mode: MULTIRUN). It will search for the best learning rate, batch size, channel dimensions, and weight decay based on the search space defined in conf/config.yaml.
 ```bash
 python train.py
 ```
 Note: Results for each trial are saved in the multirun/ directory and synced to your W&B dashboard.
 
-# 2. Overriding Parameters via CLI
+2. Overriding Parameters via CLI
 Hydra allows you to modify the configuration dynamically without touching the YAML file. This is perfect for quick tests.
 
 Examples:
@@ -114,9 +126,9 @@ wandb login
 - Hyperparameters for each run
 
 ## 📊 Visual Results
-(Add a brief sentence here detailing your final accuracy, e.g., "The optimal configuration achieved X% accuracy on the test set.")
 
 Below are sample predictions made by the best model on the test dataset:
+("The optimal configuration achieved X% accuracy on the test set.")
 
 ## 🧩 Configuration Highlight (YAML)
 All logic is driven by conf/config.yaml. Here is a snippet of how the Optuna search space is defined:
@@ -138,6 +150,6 @@ hydra:
 This project is licensed under the MIT License.
 
 👤 Authors
-GitHub: @OxmoGambino
-
-GitHub: @gtritzguden
+[Hydra](https://hydra.cc/)
+GitHub: [@OxmoGambino](https://github.com/OxmoGambino)
+GitHub: [@gtritzguden](https://github.com/gtritzguden)
