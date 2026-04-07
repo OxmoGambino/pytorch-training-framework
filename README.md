@@ -1,64 +1,60 @@
-# pytorch-training-framework
+# CIFAR-10 Classification Framework 🚀
 
-A minimal **PyTorch training framework** for image classification on **CIFAR-10**.
-This project provides a clean, modular, and reproducible baseline to train, evaluate, and iterate on computer vision models.
+A professional, MLOps-ready **PyTorch training framework** for image classification on the **CIFAR-10** dataset. 
+This project provides a highly modular, reproducible, and easily tunable pipeline integrating state-of-the-art tools for configuration management, hyperparameter optimization, and experiment tracking.
 
 ## ✨ Goals
 
-- Provide a simple and maintainable deep learning training structure.
-- Standardize the key steps: data loading, model definition, training, evaluation, and checkpointing.
-- Serve as a learning-friendly template and a solid starting point for more advanced projects.
+- Provide a scalable and maintainable deep learning structure.
+- Fully decouple configuration from code for rapid iteration.
+- Automate hyperparameter search to maximize model performance.
+- Guarantee experiment reproducibility and comprehensive tracking.
 
 ## 🧱 Features
 
-- CIFAR-10 data loading and preprocessing
-- PyTorch training loop (train/validation)
-- Core metrics tracking (loss, accuracy)
-- Model checkpoint saving (best + last)
-- Centralized hyperparameter configuration
-- CPU / GPU support (CUDA if available)
-- Clear epoch-by-epoch logging
+- **Custom Architecture:** Configurable CNN backbone coupled with a Multi-Layer Perceptron (MLP) head.
+- **Configuration Management:** Centralized declarative config via [Hydra](https://hydra.cc/).
+- **Hyperparameter Sweeps:** Automated tuning using [Optuna](https://optuna.org/) (TPE Sampler).
+- **Experiment Tracking:** Real-time logging of metrics, losses, and system stats via [Weights & Biases (W&B)](https://wandb.ai/).
+- **Data Augmentation:** Integrated PyTorch transformations (Random Crop, Horizontal Flip).
+- **Automated Checkpointing:** Saves the best model weights based on validation performance.
 
-## 📂 Project Structure (example)
-
-> Adjust this section to match the real repository tree if needed.
+## 📂 Project Structure
 
 ```bash
 pytorch-training-framework/
-├─ README.md
-├─ requirements.txt
-├─ train.py
-├─ evaluate.py
-├─ config/
-│  └─ default.yaml
-├─ src/
-│  ├─ data/
-│  │  └─ cifar10.py
-│  ├─ models/
-│  │  └─ cnn.py
-│  ├─ engine/
-│  │  ├─ trainer.py
-│  │  └─ evaluator.py
-│  ├─ utils/
-│  │  ├─ metrics.py
-│  │  ├─ seed.py
-│  │  └─ checkpoint.py
-└─ outputs/
-   ├─ checkpoints/
-   └─ logs/
+├─ conf/
+│  └─ config.yaml               # Main Hydra/Optuna configuration
+├─ data/                        # CIFAR-10 dataset (downloaded automatically)
+├─ src/                         # Source code
+│  ├─ __init__.py
+│  ├─ data.py                   # Dataloaders and data augmentation
+│  ├─ model.py                  # CNN and MLP architectures
+│  ├─ optimize.py               # Optimizer and loss functions
+│  ├─ trainer.py                # Core training and validation loops
+│  └─ utils.py                  # Helpers (logging, checkpointing)
+├─ wandb/                       # W&B local sync logs
+├─ multirun/                    # Hydra logs and configs for Optuna sweeps
+├─ checkpoints/
+│  └─ best_model.pt             # Best model weights
+├─ train.py                     # Main execution script
+├─ predictions_exemples.png     # Visual preview of predictions
+├─ .gitignore
+└─ README.md
 ```
 
 ## ⚙️ Requirements
+To run this framework, you need Python 3.9+ and the following core libraries:
 
-- Python 3.9+
-- pip
-- (Optional) NVIDIA GPU with CUDA support
+- torch, torchvision (PyTorch)
+- hydra-core (Configuration)
+- hydra-optuna-sweeper (Optuna plugin for Hydra)
+- wandb (Weights & Biases)
 
 ## 🚀 Installation
-
 ```bash
 # 1) Clone the repository
-git clone https://github.com/OxmoGambino/pytorch-training-framework.git
+git clone [https://github.com/OxmoGambino/pytorch-training-framework.git](https://github.com/OxmoGambino/pytorch-training-framework.git)
 cd pytorch-training-framework
 
 # 2) Create and activate a virtual environment
@@ -71,120 +67,77 @@ source .venv/bin/activate
 .venv\Scripts\Activate.ps1
 
 # 3) Install dependencies
-pip install -r requirements.txt
+pip install torch torchvision hydra-core hydra-optuna-sweeper wandb
+# (Alternatively: pip install -r requirements.txt if available)
 ```
 
-## ▶️ Training
-
-Basic run:
-
+## ▶️ Usage & Training
+# 1. Running a Hyperparameter Sweep (Default)
+By default, the project is set up to run an Optuna sweep (mode: MULTIRUN). It will search for the best learning rate, batch size, channel dimensions, and weight decay based on the search space defined in conf/config.yaml.
 ```bash
 python train.py
 ```
+Note: Results for each trial are saved in the multirun/ directory and synced to your W&B dashboard.
 
-Example with CLI arguments (if implemented in your code):
+# 2. Overriding Parameters via CLI
+Hydra allows you to modify the configuration dynamically without touching the YAML file. This is perfect for quick tests.
 
+Examples:
+Change training parameters:
 ```bash
-python train.py --epochs 20 --batch-size 128 --lr 0.001 --device cuda
+python train.py training.epochs=50 training.batch_size=128 training.lr=0.005
 ```
-
-## 🧪 Evaluation
+Change model architecture:
+```bash
+python train.py model.cnn.nb_channels1=64 model.cnn.dropout=0.5 model.mlp.hidden_dim=1024
+```
+Toggle data augmentation:
 
 ```bash
-python evaluate.py --checkpoint outputs/checkpoints/best.pt
+python train.py augmentation.rotation.enabled=True augmentation.rotation.degrees=20
 ```
 
 ## 🧠 Dataset: CIFAR-10
+- 60,000 color images (32x32 pixels)
+- 10 distinct classes
+- Standard split: 50,000 training images / 10,000 test images
+- Data is downloaded automatically via torchvision on the first run.
 
-- 60,000 color images (32x32)
-- 10 classes
-- Standard split: 50,000 train / 10,000 test
+## 📈 Tracking & Logs
+This framework heavily relies on Weights & Biases. Make sure you are logged in to your W&B account:
+```bash
+wandb login
+```
+# Tracked metrics include:
+- Training and Validation Loss
+- Accuracy
+- Hyperparameters for each run
 
-Data is typically downloaded automatically using `torchvision.datasets.CIFAR10`.
+## 📊 Visual Results
+(Add a brief sentence here detailing your final accuracy, e.g., "The optimal configuration achieved X% accuracy on the test set.")
 
-## 📈 Tracked Metrics
+Below are sample predictions made by the best model on the test dataset:
 
-- **Training loss**
-- **Validation loss**
-- **Top-1 accuracy**
-- (Optional) precision/recall/F1 per class
-
-## 💾 Checkpoints & Logs
-
-- `best` checkpoint (best validation performance)
-- `last` checkpoint (most recent epoch)
-- Training history logs (text/JSON/CSV depending on implementation)
-
-Example output convention:
-
-```text
-outputs/checkpoints/best.pt
-outputs/checkpoints/last.pt
-outputs/logs/train.log
+## 🧩 Configuration Highlight (YAML)
+All logic is driven by conf/config.yaml. Here is a snippet of how the Optuna search space is defined:
+```bash
+YAML
+hydra:
+  mode: MULTIRUN
+  sweeper:
+    direction: maximize
+    study_name: cifar10_GTG_NDP
+    params:
+      training.lr: tag(log, interval(1e-4, 1e-2))
+      training.batch_size: choice(32, 64, 128)
+      model.cnn.nb_channels1: choice(16, 32, 64)
+      optimizer.weight_decay: tag(log, interval(1e-6, 1e-2))
 ```
 
-## 🔁 Reproducibility
+📜 License
+This project is licensed under the MIT License.
 
-To improve reproducibility:
+👤 Authors
+GitHub: @OxmoGambino
 
-- Set a global random seed (`torch`, `numpy`, `random`)
-- Pin dependency versions
-- Log full experiment configuration (hyperparameters, seed, device)
-
-## 🛠️ Customization
-
-You can easily:
-
-- Swap model architectures in `src/models/`
-- Add augmentations in `src/data/`
-- Change optimizer/scheduler in `train.py` or `trainer.py`
-- Add custom metrics in `src/utils/metrics.py`
-
-## 🧩 Configuration Example (YAML)
-
-```yaml
-seed: 42
-device: "cuda"
-training:
-  epochs: 20
-  batch_size: 128
-  learning_rate: 0.001
-  weight_decay: 0.0
-data:
-  dataset: "CIFAR10"
-  num_workers: 4
-model:
-  name: "SimpleCNN"
-checkpoint:
-  dir: "outputs/checkpoints"
-  save_best: true
-```
-
-## ✅ Roadmap
-
-- [ ] Add TensorBoard / Weights & Biases integration
-- [ ] Add early stopping
-- [ ] Add multi-GPU support (DDP)
-- [ ] Add unit tests
-- [ ] Add GitHub Actions CI
-- [ ] Add ONNX/TorchScript export
-
-## 🤝 Contributing
-
-Contributions are welcome.
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feat/my-feature`)
-3. Commit your changes (`git commit -m "feat: add ..."`)
-4. Push your branch (`git push origin feat/my-feature`)
-5. Open a Pull Request
-
-## 📜 License
-
-Add a license file (`LICENSE`).
-MIT is recommended for educational starter frameworks.
-
-## 👤 Author(s)
-
-- GitHub: [@OxmoGambino](https://github.com/OxmoGambino)
-- GitHub: [@gtritzguden](https://github.com/gtritzguden)
+GitHub: @gtritzguden
