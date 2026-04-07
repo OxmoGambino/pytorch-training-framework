@@ -126,8 +126,12 @@ wandb login
 - Hyperparameters for each run
 
 ## 📊 Visual Results
+> Below are sample predictions made by the best model on the test dataset:
+<p align="center">
+  <img src="TrackingExperiment.jpeg" alt="Picture of our experiment" width="500"/>
+</p>
 
-Below are sample predictions made by the best model on the test dataset:
+![Tracking](https://img.shields.io/badge/Weight&Biases-blue)
 ("The optimal configuration achieved X% accuracy on the test set.")
 
 ## 🧩 Configuration Highlight (YAML)
@@ -146,10 +150,7 @@ hydra:
       optimizer.weight_decay: tag(log, interval(1e-6, 1e-2))
 ```
 
-📜 License
-This project is licensed under the MIT License.
+## 👤 Authors
 
-👤 Authors
-[Hydra](https://hydra.cc/)
-GitHub: [@OxmoGambino](https://github.com/OxmoGambino)
-GitHub: [@gtritzguden](https://github.com/gtritzguden)
+- GitHub: [@OxmoGambino](https://github.com/OxmoGambino)
+- GitHub: [@gtritzguden](https://github.com/gtritzguden)
