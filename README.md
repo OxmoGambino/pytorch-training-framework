@@ -153,5 +153,5 @@ hydra:
 
 ## 👤 Authors
 
-- GitHub: [@OxmoGambino](https://github.com/OxmoGambino)
-- GitHub: [@gtritzguden](https://github.com/gtritzguden)
+- GitHub: [@Nicola Di Pietro](https://github.com/NicolaDiPietro)
+- GitHub: [Guillaume Tritz--Guden](https://github.com/gtritzguden)
